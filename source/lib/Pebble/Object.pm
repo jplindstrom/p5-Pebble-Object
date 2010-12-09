@@ -1,110 +1,51 @@
-package Pebble::Object;
-
-use warnings;
-use strict;
 
 =head1 NAME
 
-Pebble::Object - The great new Pebble::Object!
-
-=head1 VERSION
-
-Version 0.01
+Pebble::Object - Base class for Pebble objects
 
 =cut
 
-our $VERSION = '0.01';
+package Pebble::Object;
+use Moose;
+use MooseX::Method::Signatures;
 
+use IO::Pipeline;
+use JSON::XS;
 
-=head1 SYNOPSIS
+#TODO: cache the metaclass creation on join("-", sort @$has)
+method new_meta_class($class: $has) {
+    @$has or die( "Can't define class: No field names provided (with 'has')\n" );
 
-Quick summary of what the module does.
+    my $meta_class = Moose::Meta::Class->create_anon_class(
+        superclasses => [ "Pebble::Object" ],
+    );
+    for my $field (@$has) {
+        $meta_class->add_attribute( $field => ( is => 'rw' ) );
+    }    
 
-Perhaps a little code snippet.
-
-    use Pebble::Object;
-
-    my $foo = Pebble::Object->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
-
-=cut
-
-sub function1 {
+    return $meta_class;
 }
 
-=head2 function2
+method as_json {
+    my $encoder = JSON::XS->new; #->pretty;
+    my $json = $encoder->encode( $self->as_hashref );
+    chomp( $json );
 
-=cut
-
-sub function2 {
+    return "$json\n";
 }
 
-=head1 AUTHOR
+method as_hashref {
+    my %attr = %$self;
+    delete $attr{__MOP__};
+    delete $attr{"<<MOP>>"};
+    return \%attr;
+}
 
-Johan Lindstrom, C<< <johanl at cpan.org> >>
+# maybe, not sure about this one at all
+method fields(@fields) {
+    join( ", ", map { $self->$_ } @fields );
+}
+ 
+use overload q|""| => \&as_json, fallback => 1;
 
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-pebble-object at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Pebble-Object>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Pebble::Object
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Pebble-Object>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Pebble-Object>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Pebble-Object>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Pebble-Object/>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
-
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2010 Johan Lindstrom.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
-
-
-=cut
-
-1; # End of Pebble::Object
+1;
