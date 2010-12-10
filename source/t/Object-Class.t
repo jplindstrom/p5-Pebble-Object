@@ -21,6 +21,7 @@ ok(
     "Can create meta_class"
 );
 ok( my $object = $meta_class->new_object( name => "Johan" ), "Can instantiate meta class" );
+isa_ok( $object, "Pebble::Object" );
 is_deeply( $object->as_hashref, { name => "Johan" }, "  and object looks ok" );
 
 
