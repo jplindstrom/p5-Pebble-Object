@@ -14,6 +14,8 @@ use JSON::XS;
 
 #TODO: cache the metaclass creation on join("-", sort @$has)
 method new_meta_class($class: $has) {
+    #TODO: move this into application code, it should be possible to
+    #create an empty class
     @$has or die( "Can't define class: No field names provided (with 'has')\n" );
 
     my $meta_class = Moose::Meta::Class->create_anon_class(
