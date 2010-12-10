@@ -15,14 +15,42 @@ throws_ok(
 );
 
 
+note "An attribute";
+{
+    ok(
+        my $meta_class = Pebble::Object::Class->new_meta_class([ "name" ]),
+        "Can create meta_class"
+    );
+    ok(
+        my $object = $meta_class->new_object( name => "Johan" ),
+        "Can instantiate meta class"
+    );
+    isa_ok( $object, "Pebble::Object" );
+    is_deeply( $object->as_hashref, { name => "Johan" }, "  and object looks ok" );
+}
 
-ok(
-    my $meta_class = Pebble::Object::Class->new_meta_class([ "name" ]),
-    "Can create meta_class"
-);
-ok( my $object = $meta_class->new_object( name => "Johan" ), "Can instantiate meta class" );
-isa_ok( $object, "Pebble::Object" );
-is_deeply( $object->as_hashref, { name => "Johan" }, "  and object looks ok" );
 
+note "mod -delete";
+{
+    1;
+}
+
+
+note "Default object";
+
+
+note "keep";
+
+
+note "add";
+
+
+note "replace";
+
+
+note "Attributes";
+
+
+note "All together";
 
 
