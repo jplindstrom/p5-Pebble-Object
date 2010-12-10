@@ -9,6 +9,7 @@ package Pebble::Object::Class;
 use Moose;
 use MooseX::Method::Signatures;
 
+use Data::Dumper;
 use JSON::XS;
 
 #TODO: cache the metaclass creation on join("-", sort @$has)
@@ -25,6 +26,39 @@ method new_meta_class($class: $has) {
     }    
 
     return $meta_class;
+}
+
+sub mod {
+    my $class = shift;
+    my %arg = @_;
+
+    my $object = $arg{-object};
+    my $meta_class = $object->meta;
+
+    my $to_delete = $class->as_hashref( $arg{-delete} );
+    my $new_attributes = [
+        grep { ! $to_delete->{$_} }
+        map { $_->name }
+#        map { warn Data::Dumper->new( [ $_ ] )->Maxdepth(1)->Dump(); $_ }
+        $meta_class->get_all_attributes
+    ];
+
+    my $new_meta_class = $class->new_meta_class( $new_attributes );
+    
+    my $new_object = $new_meta_class->new_object( %$object );
+    
+    return $new_object;
+}
+
+method as_hashref($class: $scalar_or_arrayref) {
+    my $arrayref = $class->as_arrayref( $scalar_or_arrayref );
+    return { map { $_ => 1 } @$arrayref };
+}
+
+method as_arrayref($class: $scalar_or_arrayref) {
+    defined $scalar_or_arrayref or return [];
+    ref( $scalar_or_arrayref ) eq "ARRAY" and return $scalar_or_arrayref;
+    return [ $scalar_or_arrayref ];
 }
 
 1;

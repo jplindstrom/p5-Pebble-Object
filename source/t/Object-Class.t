@@ -30,10 +30,33 @@ note "An attribute";
 }
 
 
+
+
 note "mod -delete";
 {
-    1;
+    my $meta_class = Pebble::Object::Class->new_meta_class([ "url", "size" ]);
+    my $object = $meta_class->new_object( url => "http://localhost", size => 112211 );
+
+
+    my $new_object = Pebble::Object::Class->mod(
+        -object => $object,
+        -delete => "size",
+    );
+    is_deeply(
+        $new_object->as_hashref,
+        { url => "http://localhost" },
+        "  and object looks ok",
+    );
+    is_deeply(
+        $object->as_hashref,
+        { url => "http://localhost", size => 112211 },
+        "  and original object is the same",
+    );
+    
 }
+
+
+note "Bad object";
 
 
 note "Default object";
