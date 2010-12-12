@@ -49,6 +49,7 @@ sub mod_delete : Tests {
 
 
 sub bad_object : Tests {
+
     throws_ok(
         sub {
             Pebble::Object::Class->mod(
@@ -57,8 +58,31 @@ sub bad_object : Tests {
             );
         },
         qr/\(\) is not a Pebble::Object/,
-        "Failed, not a Pebble::Object",
+        "Failed undef, not a Pebble::Object",
     );
+
+    throws_ok(
+        sub {
+            Pebble::Object::Class->mod(
+                -object => "abc",
+                -delete => "size",
+            );
+        },
+        qr/\(abc\) is not a Pebble::Object/,
+        "Failed string, not a Pebble::Object",
+    );
+
+    throws_ok(
+        sub {
+            Pebble::Object::Class->mod(
+                -object => Pebble::Object::Class->new,
+                -delete => "size",
+            );
+        },
+        qr/\(Pebble::Object::Class=HASH\(\w+\)\) is not a Pebble::Object/,
+        "Failed other class, not a Pebble::Object",
+    );
+    
 }
 
 note "Default object";
