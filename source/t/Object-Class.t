@@ -1,22 +1,19 @@
 
-use strict;
-use warnings;
-use Test::More "no_plan";
-use Test::Exception;
+use Test::Class::Most;
 
 use Pebble::Object::Class;
 
+Test::Class->runtests;
 
-note "No attributes";
-throws_ok(
-    sub { Pebble::Object::Class->new_meta_class([]) },
-    qr/Can't define class: No field names provided \(with 'has'\)/,
-    "No attributes dies ok",
-);
+sub no_attributes : Tests {
+    throws_ok(
+        sub { Pebble::Object::Class->new_meta_class([]) },
+        qr/Can't define class: No field names provided \(with 'has'\)/,
+        "No attributes dies ok",
+    );
+}
 
-
-note "An attribute";
-{
+sub an_attribute : Tests {
     ok(
         my $meta_class = Pebble::Object::Class->new_meta_class([ "name" ]),
         "Can create meta_class"
@@ -29,11 +26,7 @@ note "An attribute";
     is_deeply( $object->as_hashref, { name => "Johan" }, "  and object looks ok" );
 }
 
-
-
-
-note "mod -delete";
-{
+sub mod_delete : Tests {
     my $meta_class = Pebble::Object::Class->new_meta_class([ "url", "size" ]);
     my $object = $meta_class->new_object( url => "http://localhost", size => 112211 );
 
