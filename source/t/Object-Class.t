@@ -85,7 +85,20 @@ sub bad_object : Tests {
     
 }
 
-note "Default object";
+sub default_object : Tests {
+    my $meta_class = Pebble::Object::Class->new_meta_class([ "url", "size" ]);
+    my $object = $meta_class->new_object( url => "http://localhost", size => 112211 );
+
+    $_ = $object;
+    my $new_object = Pebble::Object::Class->mod(
+        -delete => "size",
+    );
+    is_deeply(
+        $new_object->as_hashref,
+        { url => "http://localhost" },
+        "  and object looks ok",
+    );
+}
 
 
 note "keep";

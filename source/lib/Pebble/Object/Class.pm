@@ -33,7 +33,7 @@ sub mod {
     my $class = shift;
     my %arg = @_;
 
-    my $object = $arg{-object};
+    my $object = $arg{-object} || $_;
     if( ! ( blessed( $object ) && $object->isa( "Pebble::Object" ) ) ) {
         my $o = $object || "";
         croak( "($o) is not a Pebble::Object" );
