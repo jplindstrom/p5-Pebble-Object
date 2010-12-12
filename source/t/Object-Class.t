@@ -1,9 +1,8 @@
 
 use Test::Class::Most;
+Test::Class->runtests;
 
 use Pebble::Object::Class;
-
-Test::Class->runtests;
 
 sub no_attributes : Tests {
     throws_ok(
@@ -49,8 +48,18 @@ sub mod_delete : Tests {
 }
 
 
-note "Bad object";
-
+sub bad_object : Tests {
+    throws_ok(
+        sub {
+            Pebble::Object::Class->mod(
+                -object => undef,
+                -delete => "size",
+            );
+        },
+        qr/\(\) is not a Pebble::Object/,
+        "Failed, not a Pebble::Object",
+    );
+}
 
 note "Default object";
 

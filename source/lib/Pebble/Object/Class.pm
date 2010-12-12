@@ -9,6 +9,7 @@ package Pebble::Object::Class;
 use Moose;
 use MooseX::Method::Signatures;
 
+use Carp;
 use Data::Dumper;
 use JSON::XS;
 
@@ -33,6 +34,11 @@ sub mod {
     my %arg = @_;
 
     my $object = $arg{-object};
+    if( ! ( blessed( $object ) && $object->isa( "Pebble::Object" ) ) ) {
+        my $o = $object || "";
+        croak( "($o) is not a Pebble::Object" );
+    }  
+    
     my $meta_class = $object->meta;
 
     my $to_delete = $class->as_hashref( $arg{-delete} );
