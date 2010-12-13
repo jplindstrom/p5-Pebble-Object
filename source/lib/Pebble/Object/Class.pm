@@ -40,8 +40,9 @@ sub mod {
     }
 
     my $meta_class = $object->meta;
+    my $new_attribute_value = $object->as_hashref;
     my @existing_attributes = map { $_->name } $meta_class->get_all_attributes;
-#    warn( "existing: " . Data::Dumper->new( [ \@existing_attributes ] )->Maxdepth(1)->Dump() );
+
 
     my $to_keep = $arg{-keep}
         ? $class->as_hashref( $arg{-keep} )
@@ -49,16 +50,22 @@ sub mod {
 #warn( "to_keep: " . Data::Dumper->new( [ $to_keep ] )->Maxdepth(1)->Dump() );
 
     my $to_delete = $class->as_hashref( $arg{-delete} );
+
     my $new_attributes = [
         grep { ! $to_delete->{$_} }
         grep { $to_keep->{$_} }
 #        map { warn Data::Dumper->new( [ $_ ] )->Maxdepth(1)->Dump(); $_ }
         @existing_attributes,
     ];
+    
+    my $to_add = $arg{-add} || {}; #TODO: validate it's a hashref
+    for my $attribute ( keys %$to_add ) {
+        push( @$new_attributes, $attribute );
+        $new_attribute_value->{ $attribute } = $to_add->{ $attribute };
+    }
 
     my $new_meta_class = $class->new_meta_class( $new_attributes );
-
-    my $new_object = $new_meta_class->new_object( %$object );
+    my $new_object = $new_meta_class->new_object( %$new_attribute_value );
 
     return $new_object;
 }

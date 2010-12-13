@@ -138,8 +138,43 @@ sub keep : Tests {
 }
 
 
-note "add";
+sub add : Tests {
+    my $self = shift;
+    my $object = $self->get_object;
 
+    is_deeply(
+        Pebble::Object::Class->mod(
+            -add => { },
+        )->as_hashref,
+        { url => "http://localhost", size => 112211 },
+        "-add none (empty hashref), same as before",
+    );
+
+
+    my $new_object = Pebble::Object::Class->mod(
+        -object => $object,
+        -add => { "time" => "1997-08-29" },
+    );
+    is_deeply(
+        $new_object->as_hashref,
+        { url => "http://localhost", , size => 112211, "time" => "1997-08-29" },
+        "add an attribute/value, and it's added",
+    );
+
+
+    note "Same name as existing";
+    $new_object = Pebble::Object::Class->mod(
+        -object => $object,
+        -add => { "url" => "file://abc.txt" },
+    );
+    is_deeply(
+        $new_object->as_hashref,
+        { url => "file://abc.txt", size => 112211 },
+        "Existing field name overwrites its value",
+    );
+    
+    
+}
 
 note "replace";
 
