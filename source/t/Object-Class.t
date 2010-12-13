@@ -30,6 +30,21 @@ sub get_object {
     return $_ = $object;
 }
 
+sub test_new : Tests {
+    is_deeply(
+        Pebble::Object::Class->new()->as_hashref,
+        { },
+        "New with no attributes",
+    );
+
+    is_deeply(
+        Pebble::Object::Class->new( url => "http://localhost", size => 112211 )->as_hashref,
+        { url => "http://localhost", size => 112211 },
+        "New with no attributes",
+    );
+    
+}
+
 sub mod_delete : Tests {
     my $self = shift;
     my $object = $self->get_object;
@@ -205,7 +220,6 @@ sub replace : Tests {
         "add an attribute/value, and it's added",
     );
 }
-
 
 sub add_attributes : Tests {
     my $self = shift;

@@ -13,6 +13,8 @@ use Carp;
 use Data::Dumper;
 use JSON::XS;
 
+use Pebble::Object;
+
 
 sub new {
     my $class = shift;
