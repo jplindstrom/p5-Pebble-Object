@@ -110,13 +110,13 @@ sub keep : Tests {
     my $self = shift;
     my $object = $self->get_object;
 
-    # is_deeply(
-    #     Pebble::Object::Class->mod(
-    #         -keep => [ ],
-    #     )->as_hashref,
-    #     { url => "http://localhost" },
-    #     "-keep none (empty hashref), nothing left",
-    # );
+    is_deeply(
+        Pebble::Object::Class->mod(
+            -keep => [ ],
+        )->as_hashref,
+        { },
+        "-keep none (empty hashref), nothing left",
+    );
     
     is_deeply(
         Pebble::Object::Class->mod(

@@ -17,7 +17,7 @@ use JSON::XS;
 method new_meta_class($class: $has) {
     #TODO: move this into application code, it should be possible to
     #create an empty class
-    @$has or die( "Can't define class: No field names provided (with 'has')\n" );
+#    @$has or die( "Can't define class: No field names provided (with 'has')\n" );
 
     my $meta_class = Moose::Meta::Class->create_anon_class(
         superclasses => [ "Pebble::Object" ],
