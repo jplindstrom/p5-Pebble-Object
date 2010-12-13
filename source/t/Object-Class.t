@@ -5,10 +5,9 @@ Test::Class->runtests;
 use Pebble::Object::Class;
 
 sub no_attributes : Tests {
-    throws_ok(
+    lives_ok(
         sub { Pebble::Object::Class->new_meta_class([]) },
-        qr/Can't define class: No field names provided \(with 'has'\)/,
-        "No attributes dies ok",
+        "No attributes ok",
     );
 }
 
