@@ -40,13 +40,24 @@ sub mod {
     }  
     
     my $meta_class = $object->meta;
+    my @existing_attributes = map { $_->name } $meta_class->get_all_attributes;
+    warn( "existing: " . Data::Dumper->new( [ \@existing_attributes ] )->Maxdepth(1)->Dump() );
+
+    my $to_keep;
+    if( $arg{-keep} ) {
+        $to_keep = $class->as_hashref( $arg{-keep} );
+    }
+    else {
+        @{$to_keep->{ @existing_attributes }} = 1;        
+    }
+#warn( "to_keep: " . Data::Dumper->new( [ $to_keep ] )->Maxdepth(1)->Dump() );
 
     my $to_delete = $class->as_hashref( $arg{-delete} );
     my $new_attributes = [
         grep { ! $to_delete->{$_} }
-        map { $_->name }
+        grep { $to_keep->{$_} }        
 #        map { warn Data::Dumper->new( [ $_ ] )->Maxdepth(1)->Dump(); $_ }
-        $meta_class->get_all_attributes
+        @existing_attributes,
     ];
 
     my $new_meta_class = $class->new_meta_class( $new_attributes );

@@ -25,10 +25,15 @@ sub an_attribute : Tests {
     is_deeply( $object->as_hashref, { name => "Johan" }, "  and object looks ok" );
 }
 
-sub mod_delete : Tests {
+sub get_object {
     my $meta_class = Pebble::Object::Class->new_meta_class([ "url", "size" ]);
     my $object = $meta_class->new_object( url => "http://localhost", size => 112211 );
+    return $_ = $object;
+}
 
+sub mod_delete : Tests {
+    my $self = shift;
+    my $object = $self->get_object;
 
     my $new_object = Pebble::Object::Class->mod(
         -object => $object,
@@ -86,8 +91,8 @@ sub bad_object : Tests {
 }
 
 sub default_object : Tests {
-    my $meta_class = Pebble::Object::Class->new_meta_class([ "url", "size" ]);
-    my $object = $meta_class->new_object( url => "http://localhost", size => 112211 );
+    my $self = shift;
+    my $object = $self->get_object;
 
     $_ = $object;
     my $new_object = Pebble::Object::Class->mod(
@@ -101,7 +106,36 @@ sub default_object : Tests {
 }
 
 
-note "keep";
+sub keep : Tests {
+    my $self = shift;
+    my $object = $self->get_object;
+
+    # is_deeply(
+    #     Pebble::Object::Class->mod(
+    #         -keep => [ ],
+    #     )->as_hashref,
+    #     { url => "http://localhost" },
+    #     "-keep none (empty hashref), nothing left",
+    # );
+    
+    is_deeply(
+        Pebble::Object::Class->mod(
+            -keep => "url",
+        )->as_hashref,
+        { url => "http://localhost" },
+        "-keep one existing attribute, only that one left",
+    );
+
+    is_deeply(
+        Pebble::Object::Class->mod(
+            -keep => [ "url", "missing" ],
+        )->as_hashref,
+        { url => "http://localhost" },
+        "-keep one extra (as hashref), didn't add anything",
+    );
+    
+    
+}
 
 
 note "add";
