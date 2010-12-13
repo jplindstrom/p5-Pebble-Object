@@ -50,15 +50,22 @@ sub mod {
 #warn( "to_keep: " . Data::Dumper->new( [ $to_keep ] )->Maxdepth(1)->Dump() );
 
     my $to_delete = $class->as_hashref( $arg{-delete} );
+    my $to_replace = $arg{-replace} || { }; ###TODO: validate it's a hashref
 
     my $new_attributes = [
         grep { ! $to_delete->{$_} }
+        grep { ! $to_replace->{$_} }
         grep { $to_keep->{$_} }
 #        map { warn Data::Dumper->new( [ $_ ] )->Maxdepth(1)->Dump(); $_ }
         @existing_attributes,
     ];
     
     my $to_add = $arg{-add} || {}; #TODO: validate it's a hashref
+    for my $to_replace_with ( values %$to_replace ) {
+        for my $attribute ( keys %$to_replace_with ) {
+            $to_add->{ $attribute } = $to_replace_with->{ $attribute };
+        }
+    }
     for my $attribute ( keys %$to_add ) {
         push( @$new_attributes, $attribute );
         $new_attribute_value->{ $attribute } = $to_add->{ $attribute };

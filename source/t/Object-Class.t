@@ -176,7 +176,36 @@ sub add : Tests {
     
 }
 
-note "replace";
+sub replace : Tests {
+    my $self = shift;
+    my $object = $self->get_object;
+
+    is_deeply(
+        Pebble::Object::Class->mod(
+            -replace => { },
+        )->as_hashref,
+        { url => "http://localhost", size => 112211 },
+        "-replace none (empty hashref), same as before",
+    );
+
+
+    my $new_object = Pebble::Object::Class->mod(
+        -object => $object,
+        -replace => {
+            "url" => {
+                time => "1997-08-29",
+                html => "<html />",
+            },
+            size => {
+            },
+        },
+    );
+    is_deeply(
+        $new_object->as_hashref,
+        { "time" => "1997-08-29", html => "<html />" },
+        "add an attribute/value, and it's added",
+    );
+}
 
 
 note "Attributes";
