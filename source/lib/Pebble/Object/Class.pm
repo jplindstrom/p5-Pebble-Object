@@ -13,6 +13,16 @@ use Carp;
 use Data::Dumper;
 use JSON::XS;
 
+
+sub new {
+    my $class = shift;
+    my $object = Pebble::Object->new();
+    return $class->mod(
+        -object => $object,
+        @_,
+    );
+}
+
 #TODO: cache the metaclass creation on join("-", sort @$has)
 method new_meta_class($class: $has) {
     #TODO: move this into application code, it should be possible to
@@ -66,6 +76,10 @@ sub mod {
             $to_add->{ $attribute } = $to_replace_with->{ $attribute };
         }
     }
+    for my $attribute ( grep { ! /^-/ } keys %arg ) {
+        $to_add->{ $attribute } = $arg{ $attribute };
+    }
+    
     for my $attribute ( keys %$to_add ) {
         push( @$new_attributes, $attribute );
         $new_attribute_value->{ $attribute } = $to_add->{ $attribute };
