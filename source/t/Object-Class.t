@@ -79,11 +79,11 @@ sub bad_object : Tests {
     throws_ok(
         sub {
             Pebble::Object::Class->mod(
-                -object => Pebble::Object::Class->new,
+                -object => bless( { }, "Whatever:Class" ),
                 -delete => "size",
             );
         },
-        qr/\(Pebble::Object::Class=HASH\(\w+\)\) is not a Pebble::Object/,
+        qr/\(Whatever:Class=HASH\(\w+\)\) is not a Pebble::Object/,
         "Failed other class, not a Pebble::Object",
     );
     

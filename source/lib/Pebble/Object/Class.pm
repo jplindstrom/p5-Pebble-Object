@@ -6,8 +6,8 @@ Pebble::Object::Class - Class for Pebble objects
 =cut
 
 package Pebble::Object::Class;
-use Moose;
 use MooseX::Method::Signatures;
+use Scalar::Util qw/ blessed /;
 
 use Carp;
 use Data::Dumper;
