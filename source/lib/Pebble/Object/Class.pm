@@ -9,7 +9,7 @@ package Pebble::Object::Class;
 use MooseX::Method::Signatures;
 use Scalar::Util qw/ blessed /;
 
-use Carp;
+use Carp qw/ confess /;
 use Data::Dumper;
 use JSON::XS;
 
@@ -19,7 +19,7 @@ use Pebble::Object;
 sub new {
     my $class = shift;
     my $object = Pebble::Object->new();
-    return $class->mod(
+    return $class->modify(
         -object => $object,
         @_,
     );
@@ -41,14 +41,14 @@ method new_meta_class($class: $has) {
     return $meta_class;
 }
 
-sub mod {
+sub modify {
     my $class = shift;
     my %arg = @_;
 
     my $object = exists $arg{-object} ? $arg{-object} : $_;
     if( ! ( blessed( $object ) && $object->isa( "Pebble::Object" ) ) ) {
         my $o = $object || "";
-        croak( "($o) is not a Pebble::Object" );
+        confess( "($O) is not a Pebble::Object" );
     }
 
     my $meta_class = $object->meta;

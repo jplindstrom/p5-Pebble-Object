@@ -45,11 +45,11 @@ sub test_new : Tests {
     
 }
 
-sub mod_delete : Tests {
+sub modify_delete : Tests {
     my $self = shift;
     my $object = $self->get_object;
 
-    my $new_object = Pebble::Object::Class->mod(
+    my $new_object = Pebble::Object::Class->modify(
         -object => $object,
         -delete => "size",
     );
@@ -71,7 +71,7 @@ sub bad_object : Tests {
 
     throws_ok(
         sub {
-            Pebble::Object::Class->mod(
+            Pebble::Object::Class->modify(
                 -object => undef,
                 -delete => "size",
             );
@@ -82,7 +82,7 @@ sub bad_object : Tests {
 
     throws_ok(
         sub {
-            Pebble::Object::Class->mod(
+            Pebble::Object::Class->modify(
                 -object => "abc",
                 -delete => "size",
             );
@@ -93,7 +93,7 @@ sub bad_object : Tests {
 
     throws_ok(
         sub {
-            Pebble::Object::Class->mod(
+            Pebble::Object::Class->modify(
                 -object => bless( { }, "Whatever:Class" ),
                 -delete => "size",
             );
@@ -109,7 +109,7 @@ sub default_object : Tests {
     my $object = $self->get_object;
 
     $_ = $object;
-    my $new_object = Pebble::Object::Class->mod(
+    my $new_object = Pebble::Object::Class->modify(
         -delete => "size",
     );
     is_deeply(
@@ -125,7 +125,7 @@ sub keep : Tests {
     my $object = $self->get_object;
 
     is_deeply(
-        Pebble::Object::Class->mod(
+        Pebble::Object::Class->modify(
             -keep => [ ],
         )->as_hashref,
         { },
@@ -133,7 +133,7 @@ sub keep : Tests {
     );
     
     is_deeply(
-        Pebble::Object::Class->mod(
+        Pebble::Object::Class->modify(
             -keep => "url",
         )->as_hashref,
         { url => "http://localhost" },
@@ -141,7 +141,7 @@ sub keep : Tests {
     );
 
     is_deeply(
-        Pebble::Object::Class->mod(
+        Pebble::Object::Class->modify(
             -keep => [ "url", "missing" ],
         )->as_hashref,
         { url => "http://localhost" },
@@ -157,7 +157,7 @@ sub add : Tests {
     my $object = $self->get_object;
 
     is_deeply(
-        Pebble::Object::Class->mod(
+        Pebble::Object::Class->modify(
             -add => { },
         )->as_hashref,
         { url => "http://localhost", size => 112211 },
@@ -165,7 +165,7 @@ sub add : Tests {
     );
 
 
-    my $new_object = Pebble::Object::Class->mod(
+    my $new_object = Pebble::Object::Class->modify(
         -object => $object,
         -add => { "time" => "1997-08-29" },
     );
@@ -177,7 +177,7 @@ sub add : Tests {
 
 
     note "Same name as existing";
-    $new_object = Pebble::Object::Class->mod(
+    $new_object = Pebble::Object::Class->modify(
         -object => $object,
         -add => { "url" => "file://abc.txt" },
     );
@@ -195,7 +195,7 @@ sub replace : Tests {
     my $object = $self->get_object;
 
     is_deeply(
-        Pebble::Object::Class->mod(
+        Pebble::Object::Class->modify(
             -replace => { },
         )->as_hashref,
         { url => "http://localhost", size => 112211 },
@@ -203,7 +203,7 @@ sub replace : Tests {
     );
 
 
-    my $new_object = Pebble::Object::Class->mod(
+    my $new_object = Pebble::Object::Class->modify(
         -object => $object,
         -replace => {
             "url" => {
@@ -226,13 +226,13 @@ sub add_attributes : Tests {
     my $object = $self->get_object;
 
     is_deeply(
-        Pebble::Object::Class->mod()->as_hashref,
+        Pebble::Object::Class->modify()->as_hashref,
         { url => "http://localhost", size => 112211 },
         "add none (empty list), same as before",
     );
 
 
-    my $new_object = Pebble::Object::Class->mod(
+    my $new_object = Pebble::Object::Class->modify(
         -object => $object,
         "time"  => "1997-08-29",
     );
@@ -244,7 +244,7 @@ sub add_attributes : Tests {
 
 
     note "Same name as existing";
-    $new_object = Pebble::Object::Class->mod(
+    $new_object = Pebble::Object::Class->modify(
         -object => $object,
         "url"   => "file://abc.txt",
     );
