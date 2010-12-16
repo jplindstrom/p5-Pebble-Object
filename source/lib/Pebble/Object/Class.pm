@@ -15,6 +15,7 @@ use Scalar::Util qw/ blessed /;
 use Carp qw/ confess /;
 use Data::Dumper;
 use JSON::XS;
+use Storable qw/ dclone /;
 
 use Pebble::Object;
 
@@ -26,6 +27,22 @@ sub new {
         -object => $object,
         @_,
     );
+}
+
+sub clone {
+    my $class = shift;
+    my ($object) = @_;
+    
+    my $mop1 = $object->{__MOP__};
+    my $mop2 = $object->{"<<MOP>>"};
+    
+    local $object->{__MOP__};
+    local $object->{"<<MOP>>"};
+    my $clone = dclone( $object );
+    $mop1 and $clone->{__MOP__} = $mop1;
+    $mop2 and $clone->{"<<MOP>>"} = $mop2;
+
+    return $clone;
 }
 
 #TODO: cache the metaclass creation on join("-", sort @$has)
