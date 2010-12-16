@@ -6,6 +6,9 @@ Pebble::Object::Class - Class for Pebble objects
 =cut
 
 package Pebble::Object::Class;
+use strict;
+use warnings;
+
 use MooseX::Method::Signatures;
 use Scalar::Util qw/ blessed /;
 
@@ -48,7 +51,7 @@ sub modify {
     my $object = exists $arg{-object} ? $arg{-object} : $_;
     if( ! ( blessed( $object ) && $object->isa( "Pebble::Object" ) ) ) {
         my $o = $object || "";
-        confess( "($O) is not a Pebble::Object" );
+        confess( "($object) is not a Pebble::Object" );
     }
 
     my $meta_class = $object->meta;
@@ -71,7 +74,7 @@ sub modify {
 #        map { warn Data::Dumper->new( [ $_ ] )->Maxdepth(1)->Dump(); $_ }
         @existing_attributes,
     ];
-    
+
     my $to_add = $arg{-add} || {}; #TODO: validate it's a hashref
     for my $to_replace_with ( values %$to_replace ) {
         for my $attribute ( keys %$to_replace_with ) {
@@ -81,7 +84,7 @@ sub modify {
     for my $attribute ( grep { ! /^-/ } keys %arg ) {
         $to_add->{ $attribute } = $arg{ $attribute };
     }
-    
+
     for my $attribute ( keys %$to_add ) {
         push( @$new_attributes, $attribute );
         $new_attribute_value->{ $attribute } = $to_add->{ $attribute };
