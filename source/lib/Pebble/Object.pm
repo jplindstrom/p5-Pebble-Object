@@ -12,7 +12,7 @@ use MooseX::Method::Signatures;
 use JSON::XS;
 
 method as_json {
-    my $encoder = JSON::XS->new; #->pretty;
+    my $encoder = JSON::XS->new->convert_blessed; #->pretty;
     my $json = $encoder->encode( $self->as_hashref );
     chomp( $json );
 
