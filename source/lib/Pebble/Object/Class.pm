@@ -57,6 +57,7 @@ method new_meta_class($class: $has) {
             $meta_class->add_attribute( $field => ( is => 'rw' ) );
         }
 
+        $meta_class->make_immutable;
         $meta_class;
     };
 }
