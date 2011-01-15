@@ -7,13 +7,13 @@ Pebble::Object - Base class for Pebble objects
 
 package Pebble::Object;
 use Moose;
-use MooseX::Method::Signatures;
+use Method::Signatures;
 
 use JSON::XS;
 
+my $_encoder = JSON::XS->new->convert_blessed; #->pretty;
 method as_json {
-    my $encoder = JSON::XS->new->convert_blessed; #->pretty;
-    my $json = $encoder->encode( $self->as_hashref );
+    my $json = $_encoder->encode( $self->as_hashref );
     chomp( $json );
 
     return "$json\n";

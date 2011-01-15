@@ -9,7 +9,7 @@ package Pebble::Object::Class;
 use strict;
 use warnings;
 
-use MooseX::Method::Signatures;
+use Method::Signatures;
 use Scalar::Util qw/ blessed /;
 
 use Carp qw/ confess /;
