@@ -45,20 +45,20 @@ sub clone {
     return $clone;
 }
 
-#TODO: cache the metaclass creation on join("-", sort @$has)
+my $_key_meta_class = {};
 method new_meta_class($class: $has) {
-    #TODO: move this into application code, it should be possible to
-    #create an empty class
-#    @$has or die( "Can't define class: No field names provided (with 'has')\n" );
+    my $key = join( "-", sort @$has );
 
-    my $meta_class = Moose::Meta::Class->create_anon_class(
-        superclasses => [ "Pebble::Object" ],
-    );
-    for my $field (@$has) {
-        $meta_class->add_attribute( $field => ( is => 'rw' ) );
-    }
+    return $_key_meta_class->{ $key } ||= do {
+        my $meta_class = Moose::Meta::Class->create_anon_class(
+            superclasses => [ "Pebble::Object" ],
+        );
+        for my $field (@$has) {
+            $meta_class->add_attribute( $field => ( is => 'rw' ) );
+        }
 
-    return $meta_class;
+        $meta_class;
+    };
 }
 
 sub modify {
