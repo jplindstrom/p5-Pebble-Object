@@ -69,7 +69,7 @@ sub modify {
     my $object = exists $arg{-object} ? $arg{-object} : $_;
     if( ! ( blessed( $object ) && $object->isa( "Pebble::Object" ) ) ) {
         my $o = $object || "";
-        confess( "($object) is not a Pebble::Object" );
+        confess( "($o) is not a Pebble::Object" );
     }
 
     my $meta_class = $object->meta;
