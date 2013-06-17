@@ -12,7 +12,9 @@ use Method::Signatures;
 use JSON::XS;
 
 my $_encoder = JSON::XS->new->convert_blessed; #->pretty;
-method as_json {
+sub as_json {
+    my $self = shift;
+
     my $json = $_encoder->encode( $self->as_hashref );
     chomp( $json );
 
@@ -30,7 +32,7 @@ method as_hashref {
 method fields(@fields) {
     join( ", ", map { $self->$_ } @fields );
 }
- 
+
 use overload q|""| => \&as_json, fallback => 1;
 
 1;
